@@ -3,8 +3,12 @@
 ## What is this?
 
 If you are familiar with the Vulkan API, you have probably heard of *Validation Layers* before. 
-Tey are a system built into the API to check API calls for common mistakes. This library
+They are a system built into the API to check API calls for common mistakes. This library
 attempts to do a similar thing, but for OpenGL.
+
+Also to pickup on certain quirks of the OpenGL API, where certain function calls work fine on one
+set of hardware/driver version but not on another set of hardware/driver version which `glGetError`
+and/or `glDebugMessageCallback` will not know anything about.
 
 ## Why not use `glDebugMessageCallback`?
 

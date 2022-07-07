@@ -5,7 +5,10 @@ set(CMAKE_CXX_STANDARD 17)
 
 option(GL_VALIDATION_LAYER_BUILD_TESTS "Build tests for the OpenGL Validation Layer" OFF)
 
-add_library(gl_validation_layer src/context.cpp)
+add_library(gl_validation_layer
+        src/context.cpp
+        src/shader.cpp
+)
 
 target_include_directories(gl_validation_layer PUBLIC include/)
 

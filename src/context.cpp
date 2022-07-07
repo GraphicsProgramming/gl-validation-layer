@@ -1,5 +1,8 @@
 #include <gl_layer/context.h>
 
+#include <gl_layer/private/types.h>
+#include <gl_layer/private/context.h>
+
 #include <string_view>
 #include <cstdio>
 #include <cstdarg>
@@ -9,17 +12,7 @@
 
 namespace gl_layer {
 
-using GLenum = unsigned int;
-
-enum GLShaderInfoParam {
-    GL_SHADER_TYPE = 0x8B4F,
-    GL_DELETE_STATUS = 0x8B80,
-    GL_COMPILE_STATUS = 0x8B81,
-    GL_INFO_LOG_LENGTH = 0x8B84,
-    GL_SHADER_SOURCE_LENGTH = 0x8B88
-};
-
-static const char* enum_str(GLenum v) {
+const char* enum_str(GLenum v) {
     switch(v) {
         case GL_SHADER_TYPE: return "GL_SHADER_TYPE";
         case GL_DELETE_STATUS: return "GL_DELETE_STATUS";
@@ -35,91 +28,14 @@ static void default_output_func(const char* text, void* = nullptr) {
     printf("%s", text);
 }
 
-struct Version {
-    unsigned int major = 0;
-    unsigned int minor = 0;
-};
+Context::Context(Version version) : gl_version(version) {
+    output_fun = &default_output_func;
+}
 
-// Represents a shader returned by glCreateShader
-struct Shader {
-    unsigned int handle {};
-    // If this is -1, this means the compile status was never checked by the host application.
-    // This is an error that should be reported.
-    int compile_status = -1;
-};
-
-class Context {
-public:
-    explicit Context(Version version) : gl_version(version) {
-
-    }
-
-    void set_output_callback(GLLayerOutputFun callback, void* user_data) {
-        output_fun = callback;
-        output_user_data = user_data;
-    }
-
-    void glCompileShader(unsigned int handle) {
-        // We will use glCompileShader to add shaders to our internal structure, since
-        // we cannot access the return value from glCreateShader()
-
-        auto it = shaders.find(handle);
-        if (it != shaders.end()) {
-            output_fmt("glCompileShader(shader = %u): Shader is already compiled.", handle);
-            return;
-        }
-
-        shaders.insert({ handle, Shader { handle } });
-    }
-
-    void glGetShaderiv(unsigned int handle, GLenum param, int* params) {
-        assert(params && "params may not be nullptr");
-
-        if (param == GL_COMPILE_STATUS) {
-            auto it = shaders.find(handle);
-            if (it == shaders.end()) {
-                output_fmt("glGetShaderiv(handle = %u, param = %s, params = %p): Invalid shader handle.", handle, enum_str(param), static_cast<void*>(params));
-                return;
-            }
-
-            it->second.compile_status = *params;
-        }
-    }
-
-    void glAttachShader(unsigned int program, unsigned int shader) {
-        // Make sure compile status was checked and successful when attaching a shader.
-        auto it = shaders.find(shader);
-        if (it == shaders.end()) {
-            output_fmt("glAttachShader(program = %u, shader = %u): Invalid shader handle.", program, shader);
-            return;
-        }
-
-        if (it->second.compile_status == -1) {
-            output_fmt("glAttachShader(program = %u, shader = %u): Always check shader compilation status before trying to use the object.", program, shader);
-        } else if (it->second.compile_status == false) {
-            output_fmt("glAttachShader(program = %u, shader = %u): Attached shader has a compilation error.", program, shader);
-        }
-    }
-
-private:
-    Version gl_version;
-
-    GLLayerOutputFun output_fun = &default_output_func;
-    void* output_user_data = nullptr;
-
-    // Note: Not programs!
-    std::unordered_map<unsigned int, Shader> shaders {};
-
-    template<typename... Args>
-    void output_fmt(const char* fmt, Args&&... args) {
-        std::size_t size = static_cast<std::size_t>(std::snprintf(nullptr, 0, fmt, args...)) + 1; // Extra space for null terminator
-        assert(size > 0 && "Error during formatting");
-        char* buf = new char[size];
-        std::snprintf(buf, size, fmt, args...);
-        output_fun(buf, output_user_data);
-        delete[] buf;
-    }
-};
+void Context::set_output_callback(GLLayerOutputFun callback, void* user_data) {
+    output_fun = callback;
+    output_user_data = user_data;
+}
 
 
 namespace {

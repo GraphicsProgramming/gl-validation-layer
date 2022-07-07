@@ -86,7 +86,7 @@ unsigned int create_shader(const char* vtx_path, const char* frag_path) {
     glAttachShader(shaderProgram, vtx_shader);
     glAttachShader(shaderProgram, frag_shader);
     glLinkProgram(shaderProgram);
-    
+
     // Check for errors
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
     if (!success) {

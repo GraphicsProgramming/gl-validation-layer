@@ -4,7 +4,7 @@
 
 namespace gl_layer {
 
-static void default_output_func(const char* text) {
+static void default_output_func(const char* text, void* = nullptr) {
     printf("%s", text);
 }
 
@@ -19,13 +19,15 @@ public:
 
     }
 
-    void set_output_callback(GLLayerOutputFun callback) {
+    void set_output_callback(GLLayerOutputFun callback, void* user_data) {
         output_fun = callback;
+        output_user_data = user_data;
     }
 
 private:
     Version gl_version;
     GLLayerOutputFun output_fun = &default_output_func;
+    void* output_user_data = nullptr;
 };
 
 
@@ -53,10 +55,10 @@ void gl_layer_callback(const char* name, void* func_ptr, int num_args, ...) {
     }
 }
 
-void gl_layer_set_output_callback(GLLayerOutputFun callback) {
+void gl_layer_set_output_callback(GLLayerOutputFun callback, void* user_data) {
     if (!gl_layer::g_context) {
         // Report error: context not initialized.
         return;
     }
-    gl_layer::g_context->set_output_callback(callback);
+    gl_layer::g_context->set_output_callback(callback, user_data);
 }

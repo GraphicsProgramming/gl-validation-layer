@@ -29,13 +29,14 @@ void gl_layer_terminate();
  */
 void gl_layer_callback(const char* name, void* func_ptr, int num_args, ...);
 
-typedef void (*GLLayerOutputFun)(const char* text);
+typedef void (*GLLayerOutputFun)(const char* text, void* user_data);
 /**
  * @brief This function allows the user to set a custom callback for writing validation output.
- * @param callback Callback that is called when output needs to be written. This function must take a single argument of type const char*
- *                 with the text to write.
+ * @param callback Callback that is called when output needs to be written. This function must take an argument of type const char* with the text to write,
+ *                 and a void* for user data.
+ * @param user_data Pointer to any user data you want passed into the function.
  */
-void gl_layer_set_output_callback(GLLayerOutputFun callback);
+void gl_layer_set_output_callback(GLLayerOutputFun callback, void* user_data = nullptr);
 
 #ifdef __cplusplus
 };

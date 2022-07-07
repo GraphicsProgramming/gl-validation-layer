@@ -15,6 +15,7 @@ target_compile_options(gl_validation_layer PRIVATE -Wall -Werror
         -Wno-c++98-compat-pedantic
         -Wno-newline-eof
         -Wno-unused-parameter
+        -Wno-format-nonliteral
 )
 
 if (${GL_VALIDATION_LAYER_BUILD_TESTS})

@@ -36,7 +36,7 @@ typedef void (*GLLayerOutputFun)(const char* text, void* user_data);
  *                 and a void* for user data.
  * @param user_data Pointer to any user data you want passed into the function.
  */
-void gl_layer_set_output_callback(GLLayerOutputFun callback, void* user_data = nullptr);
+[[maybe_unused]] void gl_layer_set_output_callback(GLLayerOutputFun callback, void* user_data = nullptr);
 
 #ifdef __cplusplus
 };

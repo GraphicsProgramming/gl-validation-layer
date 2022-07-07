@@ -12,7 +12,7 @@ add_library(gl_validation_layer
 
 target_include_directories(gl_validation_layer PUBLIC include/)
 
-if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL"GCC")
+if ((${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang") OR (${CMAKE_CXX_COMPILER_ID} STREQUAL "GCC"))
         target_compile_options(gl_validation_layer PRIVATE -Wall -Werror
                 -Wno-c++98-compat
                 -Wno-c++98-compat-pedantic

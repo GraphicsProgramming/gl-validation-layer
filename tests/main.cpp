@@ -15,7 +15,7 @@ void gl_error_callback([[maybe_unused]] GLenum source,
                        [[maybe_unused]] GLsizei length,
                        const GLchar* message,
                        [[maybe_unused]] const void* userParam) {
-    std::cout << "OpenGL Error (default validation)" << type << " message: " << message << std::endl;
+    std::cout << "OpenGL Error (default validation): " << type << " message: " << message << std::endl;
 }
 
 unsigned int create_shader(const char* vtx_path, const char* frag_path) {
@@ -70,7 +70,7 @@ unsigned int create_shader(const char* vtx_path, const char* frag_path) {
     if (!success) {
         glGetShaderInfoLog(vtx_shader, 512, nullptr, infolog);
         std::cout << "vertex shader compilation failed: " << infolog << std::endl;
-        return 0;
+//        return 0;
     }
 
     // And again for the fragment shader
@@ -78,7 +78,7 @@ unsigned int create_shader(const char* vtx_path, const char* frag_path) {
     if (!success) {
         glGetShaderInfoLog(frag_shader, 512, nullptr, infolog);
         std::cout << "fragment shader compilation failed: " << infolog << std::endl;
-        return 0;
+//        return 0;
     }
 
     // Finally, link the vertex and fragment shader together
@@ -92,7 +92,7 @@ unsigned int create_shader(const char* vtx_path, const char* frag_path) {
     if (!success) {
         glGetProgramInfoLog(shaderProgram, 512, nullptr, infolog);
         std::cout << "shader link failed: " << infolog << "\n";
-        return 0;
+ //       return 0;
     }
 
     // These are linked now and can safely be deleted
@@ -124,13 +124,13 @@ int main() {
         return -1;
     }
 
-    
+//    glEnable(GL_DEBUG_OUTPUT);
+//    glDebugMessageCallback(&gl_error_callback, nullptr);
     glad_set_post_callback(&gl_layer_callback);
-
-    // Main application loop
 
     unsigned int program = create_shader("shaders/vert.glsl", "shaders/frag.glsl");
 
+    // Main application loop
     while(!glfwWindowShouldClose(window)) {
         glfwPollEvents();
         glClearColor(0, 0, 0, 1);

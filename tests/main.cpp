@@ -30,7 +30,12 @@ int main() {
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
     // Initialize our library.
-    gl_layer_init(3, 3);
+    int error = gl_layer_init(3, 3);
+    if (error) {
+        std::cerr << "Could not initialize OpenGL Validation Layer\n";
+        return -1;
+    }
+
     glad_set_pre_callback(&gl_layer_callback);
 
     // Main application loop

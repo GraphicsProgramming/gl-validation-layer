@@ -19,9 +19,6 @@ The library exposes a CMake target `gl_debug_layer`. Once your app links to it, 
 `gl_layer_callback()` must be called after every OpenGL call you make. If you are using
 the debug version of `GLAD`, this is as easy as calling `glad_set_post_callback(&gl_layer_callback)`.
 
-// TODO: Explanation on how to use this together with gl_debug_output in glad (as that also
-uses the post callback).
-
 On exit, call `gl_layer_terminate()` to free resources.
 
 ### Diagnostics

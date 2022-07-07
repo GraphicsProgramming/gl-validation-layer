@@ -124,7 +124,7 @@ int main() {
         return -1;
     }
 
-    // Note that this disables glDebugMessage
+    
     glad_set_post_callback(&gl_layer_callback);
 
     // Main application loop

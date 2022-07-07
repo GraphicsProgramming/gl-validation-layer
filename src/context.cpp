@@ -4,7 +4,7 @@
 
 namespace gl_layer {
 
-void default_output_func(const char* text) {
+static void default_output_func(const char* text) {
     printf("%s", text);
 }
 
@@ -15,7 +15,7 @@ struct Version {
 
 class Context {
 public:
-    explicit Context(Version gl_version) : gl_version(gl_version) {
+    explicit Context(Version version) : gl_version(version) {
 
     }
 

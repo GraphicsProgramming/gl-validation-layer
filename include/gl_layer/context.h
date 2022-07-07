@@ -5,12 +5,36 @@
 extern "C" {
 #endif
 
+/**
+ * @brief Initialize the OpenGL Validation Layer
+ * @param gl_version_major OpenGL context major version.
+ * @param gl_version_minor OpenGL context minor version.
+ * @return 0 on success, any other value on error.
+ */
 int gl_layer_init(unsigned int gl_version_major, unsigned int gl_version_minor);
+
+/**
+ * @brief Terminate the OpenGL Validation Layer.
+ */
 void gl_layer_terminate();
 
+/**
+ * @brief This function will be used to perform validation. To enable validation, this must be called before every OpenGL call you make.
+ *        When using the GLAD loader, this can be done by simply calling glad_set_pre_callback(&gl_layer_callback). If you are using a
+ *        different loader, you will need to register this callback some other way.
+ * @param name Name of the OpenGL function being called.
+ * @param func_ptr Pointer to the OpenGL function being called.
+ * @param num_args Amount of arguments.
+ * @param ... Arguments to the OpenGL function being called.
+ */
 void gl_layer_callback(const char* name, void* func_ptr, int num_args, ...);
 
 typedef void (*GLLayerOutputFun)(const char* text);
+/**
+ * @brief This function allows the user to set a custom callback for writing validation output.
+ * @param callback Callback that is called when output needs to be written. This function must take a single argument of type const char*
+ *                 with the text to write.
+ */
 void gl_layer_set_output_callback(GLLayerOutputFun callback);
 
 #ifdef __cplusplus

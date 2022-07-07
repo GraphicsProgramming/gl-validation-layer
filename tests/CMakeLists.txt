@@ -1,0 +1,14 @@
+include(FetchContent)
+
+FetchContent_Declare(glfw
+    GIT_REPOSITORY https://github.com/glfw/glfw
+    GIT_TAG 3.3.7
+)
+FetchContent_MakeAvailable(glfw)
+
+add_library(gl_validation_layer_tests_glad STATIC)
+target_sources(gl_validation_layer_tests_glad PRIVATE glad/src/glad.c)
+target_include_directories(gl_validation_layer_tests_glad PUBLIC glad/include)
+
+add_executable(gl_validation_layer_tests main.cpp)
+target_link_libraries(gl_validation_layer_tests PRIVATE gl_validation_layer gl_validation_layer_tests_glad glfw)

@@ -12,14 +12,20 @@ add_library(gl_validation_layer
 
 target_include_directories(gl_validation_layer PUBLIC include/)
 
-# TODO: Check compiler and only set flags when available
-target_compile_options(gl_validation_layer PRIVATE -Wall -Werror
-        -Wno-c++98-compat
-        -Wno-c++98-compat-pedantic
-        -Wno-newline-eof
-        -Wno-unused-parameter
-        -Wno-format-nonliteral
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL"GCC")
+        target_compile_options(gl_validation_layer PRIVATE -Wall -Werror
+                -Wno-c++98-compat
+                -Wno-c++98-compat-pedantic
+                -Wno-newline-eof
+                -Wno-unused-parameter
+                -Wno-format-nonliteral
+        )
+else()
+target_compile_options(gl_validation_layer PRIVATE
+        /W3
+        /WX
 )
+endif()
 
 if (${GL_VALIDATION_LAYER_BUILD_TESTS})
     message(STATUS "OpenGL Validation Layer - Testing enabled. Set GL_VALIDATION_LAYER_BUILD_TESTS to OFF to disable.")

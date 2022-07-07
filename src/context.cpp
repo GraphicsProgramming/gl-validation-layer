@@ -6,9 +6,6 @@
 #include <string_view>
 #include <cstdio>
 #include <cstdarg>
-#include <cassert>
-
-#include <unordered_map>
 
 namespace gl_layer {
 
@@ -17,6 +14,7 @@ const char* enum_str(GLenum v) {
         case GL_SHADER_TYPE: return "GL_SHADER_TYPE";
         case GL_DELETE_STATUS: return "GL_DELETE_STATUS";
         case GL_COMPILE_STATUS: return "GL_COMPILE_STATUS";
+        case GL_LINK_STATUS: return "GL_LINK_STATUS";
         case GL_INFO_LOG_LENGTH: return "GL_INFO_LOG_LENGTH";
         case GL_SHADER_SOURCE_LENGTH: return "GL_SHADER_SOURCE_LENGTH";
         default:
@@ -25,7 +23,7 @@ const char* enum_str(GLenum v) {
 }
 
 static void default_output_func(const char* text, void* = nullptr) {
-    printf("%s", text);
+    printf("%s\n", text);
 }
 
 Context::Context(Version version) : gl_version(version) {
@@ -80,6 +78,14 @@ void gl_layer_callback(const char* name, void* func_ptr, int num_args, ...) {
         unsigned int program = va_arg(args, unsigned int);
         unsigned int shader = va_arg(args, unsigned int);
         gl_layer::g_context->glAttachShader(program, shader);
+    } else if (is_func(name, "glGetProgramiv")) {
+        unsigned int program = va_arg(args, unsigned int);
+        gl_layer::GLenum param = va_arg(args, gl_layer::GLenum);
+        int* params = va_arg(args, int*);
+        gl_layer::g_context->glGetProgramiv(program, param, params);
+    } else if (is_func(name, "glUseProgram")) {
+        unsigned int program = va_arg(args, unsigned int);
+        gl_layer::g_context->glUseProgram(program);
     }
 
     va_end(args);

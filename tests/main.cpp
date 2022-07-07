@@ -103,6 +103,7 @@ unsigned int create_shader(const char* vtx_path, const char* frag_path) {
 }
 
 int main() {
+
     // Initialize GLFW.
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -132,6 +133,8 @@ int main() {
 
     while(!glfwWindowShouldClose(window)) {
         glfwPollEvents();
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glUseProgram(program);
 

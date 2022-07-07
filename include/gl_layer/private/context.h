@@ -19,19 +19,21 @@ public:
     void glGetShaderiv(unsigned int handle, GLenum param, int* params);
     void glAttachShader(unsigned int program, unsigned int shader);
 
+    void glGetProgramiv(unsigned int handle, GLenum param, int* params);
+    void glUseProgram(unsigned int handle);
+
 private:
     Version gl_version;
 
     GLLayerOutputFun output_fun = nullptr;
     void* output_user_data = nullptr;
 
-    // Note: Not programs!
     std::unordered_map<unsigned int, Shader> shaders{};
+    std::unordered_map<unsigned int, Program> programs{};
 
     template<typename... Args>
     void output_fmt(const char* fmt, Args&& ... args) {
-        std::size_t size = static_cast<std::size_t>(std::snprintf(nullptr, 0, fmt, args...)) +
-                           1; // Extra space for null terminator
+        std::size_t size = static_cast<std::size_t>(std::snprintf(nullptr, 0, fmt, args...)) + 1; // Extra space for null terminator
         assert(size > 0 && "Error during formatting");
         char* buf = new char[size];
         std::snprintf(buf, size, fmt, args...);

@@ -5,13 +5,22 @@
 extern "C" {
 #endif
 
+typedef struct ContextGLFunctions
+{
+  // TODO: replace the types in the parameters with proper platform-detected ones
+  // TODO: evaluate whether * should be replaced with something like APIENTRYP in glad
+  void (*GetActiveUniform)(unsigned, unsigned, int, int*, int*, unsigned*, char*);
+  int (*GetUniformLocation)(unsigned, const char*);
+  void (*GetProgramiv)(unsigned, unsigned, int*);
+}ContextGLFunctions;
+
 /**
  * @brief Initialize the OpenGL Validation Layer
  * @param gl_version_major OpenGL context major version.
  * @param gl_version_minor OpenGL context minor version.
  * @return 0 on success, any other value on error.
  */
-int gl_layer_init(unsigned int gl_version_major, unsigned int gl_version_minor);
+int gl_layer_init(unsigned int gl_version_major, unsigned int gl_version_minor, const ContextGLFunctions* gl_functions);
 
 /**
  * @brief Terminate the OpenGL Validation Layer.

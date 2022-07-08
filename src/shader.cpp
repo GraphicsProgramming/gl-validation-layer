@@ -1,6 +1,6 @@
 #include <gl_layer/context.h>
 #include <gl_layer/private/context.h>
-
+#include <memory>
 
 namespace gl_layer {
 
@@ -14,7 +14,7 @@ void Context::glCompileShader(unsigned int handle) {
         return;
     }
 
-    shaders.insert({ handle, Shader { handle } });
+    shaders.emplace(handle, Shader{ handle });
 }
 
 void Context::glGetShaderiv(unsigned int handle, GLenum param, int* params) {
@@ -68,6 +68,45 @@ void Context::glGetProgramiv(unsigned int handle, GLenum param, int* params) {
         }
 
         it->second.link_status = static_cast<LinkStatus>(*params);
+    }
+}
+
+void Context::glLinkProgram(GLuint program)
+{
+    auto program_it = programs.find(program);
+    if (program_it == programs.end()) {
+        output_fmt("glLinkProgram(program = %u): Invalid program handle.", program);
+        return;
+    }
+
+    auto& programr = program_it->second;
+
+    GLint uniform_count{};
+    gl.GetProgramiv(program, GL_ACTIVE_UNIFORMS, &uniform_count);
+    if (uniform_count > 0)
+    {
+        GLint max_name_len{};
+        gl.GetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_name_len);
+
+        auto uniform_name = std::make_unique<char[]>(max_name_len);
+
+        for (int i = 0; i < uniform_count; i++)
+        {
+            GLsizei uniform_name_length{};
+            UniformInfo uniform_info{};
+            gl.GetActiveUniform(
+              program,
+              i,
+              max_name_len,
+              &uniform_name_length,
+              &uniform_info.array_size,
+              &uniform_info.type,
+              uniform_name.get());
+
+            auto loc = gl.GetUniformLocation(program, uniform_name.get());
+
+            programr.uniforms.emplace(loc, uniform_info);
+        }
     }
 }
 

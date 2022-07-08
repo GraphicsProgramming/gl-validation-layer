@@ -26,7 +26,8 @@ static void default_output_func(const char* text, void* = nullptr) {
     printf("%s\n", text);
 }
 
-Context::Context(Version version) : gl_version(version) {
+Context::Context(Version version, const ContextGLFunctions* gl_functions) 
+  : gl_version(version), gl(*gl_functions) {
     output_fun = &default_output_func;
 }
 
@@ -46,8 +47,8 @@ static bool is_func(const char* name, std::string_view func) {
     return func == name;
 }
 
-int gl_layer_init(unsigned int gl_version_major, unsigned int gl_version_minor) {
-    gl_layer::g_context = new gl_layer::Context(gl_layer::Version{ gl_version_major, gl_version_minor });
+int gl_layer_init(unsigned int gl_version_major, unsigned int gl_version_minor, const ContextGLFunctions* gl_functions) {
+    gl_layer::g_context = new gl_layer::Context(gl_layer::Version{ gl_version_major, gl_version_minor }, gl_functions);
     if (gl_layer::g_context) return 0;
 
     return -1;
@@ -86,6 +87,9 @@ void gl_layer_callback(const char* name, void* func_ptr, int num_args, ...) {
     } else if (is_func(name, "glUseProgram")) {
         unsigned int program = va_arg(args, unsigned int);
         gl_layer::g_context->glUseProgram(program);
+    } else if (is_func(name, "glLinkProgram")) {
+        unsigned int program = va_arg(args, unsigned int);
+        gl_layer::g_context->glLinkProgram(program);
     }
 
     va_end(args);

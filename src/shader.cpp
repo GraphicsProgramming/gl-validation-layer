@@ -27,7 +27,7 @@ void Context::glGetShaderiv(unsigned int handle, GLenum param, int* params) {
             return;
         }
 
-        it->second.compile_status = *params;
+        it->second.compile_status = static_cast<CompileStatus>(*params);
     }
 }
 
@@ -39,9 +39,9 @@ void Context::glAttachShader(unsigned int program, unsigned int shader) {
         return;
     }
 
-    if (it->second.compile_status == -1) {
+    if (it->second.compile_status == CompileStatus::UNCHECKED) {
         output_fmt("glAttachShader(program = %u, shader = %u): Always check shader compilation status before trying to use the object.", program, shader);
-    } else if (it->second.compile_status == false) {
+    } else if (it->second.compile_status == CompileStatus::FAILED) {
         output_fmt("glAttachShader(program = %u, shader = %u): Attached shader has a compilation error.", program, shader);
     }
 
@@ -67,7 +67,7 @@ void Context::glGetProgramiv(unsigned int handle, GLenum param, int* params) {
             return;
         }
 
-        it->second.link_status = *params;
+        it->second.link_status = static_cast<LinkStatus>(*params);
     }
 }
 
@@ -78,12 +78,12 @@ void Context::glUseProgram(unsigned int handle) {
         return;
     }
 
-    if (it->second.link_status == -1) {
+    if (it->second.link_status == LinkStatus::UNCHECKED) {
         output_fmt("glUseProgram(program = %u): Always check program link status before trying to use the object.", handle);
         return;
     }
 
-    if (it->second.link_status == false) {
+    if (it->second.link_status == LinkStatus::FAILED) {
         output_fmt("glUseProgram(program = %u): Program has a linker error.", handle);
         return;
     }

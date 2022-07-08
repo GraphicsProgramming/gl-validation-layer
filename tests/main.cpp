@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <optional>
 
 #include <gl_layer/context.h>
 #include <glad/glad.h>
@@ -18,32 +20,22 @@ void gl_error_callback([[maybe_unused]] GLenum source,
     std::cout << "OpenGL Error (default validation): " << type << " message: " << message << std::endl;
 }
 
-unsigned int create_shader(const char* vtx_path, const char* frag_path) {
+std::optional<std::string> load_file(std::string_view path)
+{
+  std::fstream file(path.data());
+
+  if (!file.good()) {
+    return std::nullopt;
+  }
+
+  std::stringstream buf;
+  buf << file.rdbuf();
+
+  return std::string(buf.str());
+}
+
+unsigned int create_shader(std::string_view vtx_source, std::string_view frag_source) {
     using namespace std::literals::string_literals;
-
-    std::fstream file(vtx_path);
-
-    if (!file.good()) {
-        return 0;
-    }
-
-    std::stringstream buf;
-    buf << file.rdbuf();
-
-    std::string vtx_source(buf.str());
-
-    file.close();
-    buf = std::stringstream{}; // reset buffer
-    file.open(frag_path);
-
-    if (!file.good()) {
-        return 0;
-    }
-
-    buf << file.rdbuf();
-
-    std::string frag_source(buf.str());
-    buf = std::stringstream{};
 
     unsigned int vtx_shader = 0, frag_shader = 0;
     vtx_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -51,8 +43,8 @@ unsigned int create_shader(const char* vtx_path, const char* frag_path) {
     // This is wrapped inside a lambda to limit the scope of vtx_carr and
     // frag_carr
     [&vtx_source, &frag_source, &vtx_shader, &frag_shader]() {
-        const char* vtx_carr = vtx_source.c_str();
-        const char* frag_carr = frag_source.c_str();
+        const char* vtx_carr = vtx_source.data();
+        const char* frag_carr = frag_source.data();
         glShaderSource(vtx_shader, 1, &vtx_carr, nullptr);
         glShaderSource(frag_shader, 1, &frag_carr, nullptr);
     }();
@@ -102,6 +94,17 @@ unsigned int create_shader(const char* vtx_path, const char* frag_path) {
     return shaderProgram;
 }
 
+unsigned create_shader_from_files(std::string_view vtx_path, std::string_view frag_path)
+{
+  auto vtx_source = load_file(vtx_path);
+  if (!vtx_source) return 0;
+
+  auto frag_source = load_file(frag_path);
+  if (!frag_source) return 0;
+
+  return create_shader(*vtx_source, *frag_source);
+}
+
 int main() {
 
     // Initialize GLFW.
@@ -111,14 +114,18 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
-
+    
     GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL Validation Layer - tests", nullptr, nullptr);
     glfwMakeContextCurrent(window);
     // Load GLAD.
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
     // Initialize our library.
-    int error = gl_layer_init(3, 3);
+    ContextGLFunctions glFuncs;
+    glFuncs.GetActiveUniform = glad_glGetActiveUniform;
+    glFuncs.GetUniformLocation = glad_glGetUniformLocation;
+    glFuncs.GetProgramiv = glad_glGetProgramiv;
+    int error = gl_layer_init(3, 3, &glFuncs);
     if (error) {
         std::cerr << "Could not initialize OpenGL Validation Layer\n";
         return -1;
@@ -128,7 +135,31 @@ int main() {
 //    glDebugMessageCallback(&gl_error_callback, nullptr);
     glad_set_post_callback(&gl_layer_callback);
 
-    unsigned int program = create_shader("shaders/vert.glsl", "shaders/frag.glsl");
+    const char* vtx_source2 = R"(
+#version 330 core
+
+layout(location = 0) in vec3 iPos;
+
+void main() {
+    gl_Position = vec4(iPos, 1);
+}
+)";
+
+    const char* frag_source2 = R"(
+#version 330 core
+
+uniform vec3 u_color;
+uniform float u_alpha;
+
+out vec4 o_color;
+
+void main() {
+    o_color = vec4(u_color, u_alpha);
+}
+)";
+
+    unsigned int program = create_shader_from_files("shaders/vert.glsl", "shaders/frag.glsl");
+    unsigned int program2 = create_shader(vtx_source2, frag_source2);
 
     // Main application loop
     while(!glfwWindowShouldClose(window)) {
@@ -137,6 +168,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glUseProgram(program);
+        glUseProgram(program2);
 
         glfwSwapBuffers(window);
     }

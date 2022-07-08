@@ -11,7 +11,7 @@ namespace gl_layer {
 
 class Context {
 public:
-    explicit Context(Version version);
+    explicit Context(Version version, const ContextGLFunctions* gl_functions);
 
     void set_output_callback(GLLayerOutputFun callback, void* user_data);
 
@@ -20,6 +20,7 @@ public:
     void glAttachShader(unsigned int program, unsigned int shader);
 
     void glGetProgramiv(unsigned int handle, GLenum param, int* params);
+    void glLinkProgram(GLuint program);
     void glUseProgram(unsigned int handle);
 
 private:
@@ -27,6 +28,7 @@ private:
 
     GLLayerOutputFun output_fun = nullptr;
     void* output_user_data = nullptr;
+    ContextGLFunctions gl;
 
     std::unordered_map<unsigned int, Shader> shaders{};
     std::unordered_map<unsigned int, Program> programs{};

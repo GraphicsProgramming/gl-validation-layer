@@ -16,6 +16,18 @@ enum GLShaderInfoParam {
     GL_SHADER_SOURCE_LENGTH = 0x8B88
 };
 
+enum class CompileStatus {
+    UNCHECKED = -1,
+    FAILED = 0,
+    OK = 1,
+};
+
+enum class LinkStatus {
+  UNCHECKED = -1,
+  FAILED = 0,
+  OK = 1,
+};
+
 const char* enum_str(GLenum v);
 
 struct Version {
@@ -28,7 +40,7 @@ struct Shader {
     unsigned int handle {};
     // If this is -1, this means the compile status was never checked by the host application.
     // This is an error that should be reported.
-    int compile_status = -1;
+    CompileStatus compile_status = CompileStatus::UNCHECKED;
 };
 
 // Represents a shader program returned by glCreateProgram
@@ -36,7 +48,7 @@ struct Program {
     unsigned int handle {};
     std::vector<unsigned int> shaders {};
     // If this is -1, this means the status was never checked by the host application.
-    int link_status = -1;
+    LinkStatus link_status = LinkStatus::UNCHECKED;
 };
 
 }

@@ -8,6 +8,9 @@ option(GL_VALIDATION_LAYER_BUILD_TESTS "Build tests for the OpenGL Validation La
 add_library(gl_validation_layer
         src/context.cpp
         src/shader.cpp
+        include/gl_layer/context.h
+        include/gl_layer/private/context.h
+        include/gl_layer/private/types.h
 )
 
 target_include_directories(gl_validation_layer PUBLIC include/)

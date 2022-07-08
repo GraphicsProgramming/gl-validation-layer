@@ -18,7 +18,7 @@ a solution that gives clear feedback, tests for more errors and is easy to use.
 
 ## Setup
 
-The library exposes a CMake target `gl_debug_layer`. Once your app links to it, simply call
+The library exposes a CMake target `gl_validation_layer`. Once your app links to it, simply call
 `gl_layer_init()` with the OpenGL version you are using. To register the callback,
 `gl_layer_callback()` must be called after every OpenGL call you make. If you are using
 the debug version of `GLAD`, this is as easy as calling `glad_set_post_callback(&gl_layer_callback)`.

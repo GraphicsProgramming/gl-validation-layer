@@ -43,8 +43,12 @@ Context* g_context = nullptr;
 
 } // namespace gl_layer
 
-static bool is_func(const char* name, std::string_view func) {
+static bool is_func(std::string_view name, std::string_view func) {
     return func == name;
+}
+
+static bool func_has(std::string_view name, std::string_view substr) {
+    return name.find(substr) != std::string_view::npos;
 }
 
 int gl_layer_init(unsigned int gl_version_major, unsigned int gl_version_minor, const ContextGLFunctions* gl_functions) {
@@ -63,6 +67,10 @@ void gl_layer_callback(const char* name, void* func_ptr, int num_args, ...) {
         // Report error: context not initialized.
         return;
     }
+
+    using namespace gl_layer; // GL types
+
+    std::string_view name = name_c;
 
     va_list args;
     va_start(args, num_args);

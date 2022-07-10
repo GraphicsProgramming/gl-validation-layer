@@ -109,8 +109,8 @@ int main() {
 
     // Initialize GLFW.
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
@@ -125,7 +125,7 @@ int main() {
     glFuncs.GetActiveUniform = glad_glGetActiveUniform;
     glFuncs.GetUniformLocation = glad_glGetUniformLocation;
     glFuncs.GetProgramiv = glad_glGetProgramiv;
-    int error = gl_layer_init(3, 3, &glFuncs);
+    int error = gl_layer_init(4, 6, &glFuncs);
     if (error) {
         std::cerr << "Could not initialize OpenGL Validation Layer\n";
         return -1;

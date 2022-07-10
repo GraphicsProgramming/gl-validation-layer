@@ -22,6 +22,10 @@ public:
     void glGetProgramiv(unsigned int handle, GLenum param, int* params);
     void glLinkProgram(GLuint program);
     void glUseProgram(unsigned int handle);
+    void glDeleteProgram(GLuint program);
+
+    void validate_program_bound(std::string_view func_name);
+    bool validate_program_status(GLuint program);
 
 private:
     Version gl_version;
@@ -29,6 +33,7 @@ private:
     GLLayerOutputFun output_fun = nullptr;
     void* output_user_data = nullptr;
     ContextGLFunctions gl;
+    GLuint bound_program = 0;
 
     std::unordered_map<unsigned int, Shader> shaders{};
     std::unordered_map<unsigned int, Program> programs{};

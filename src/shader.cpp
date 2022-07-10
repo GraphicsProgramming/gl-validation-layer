@@ -79,8 +79,9 @@ void Context::glLinkProgram(GLuint program)
         return;
     }
 
-    auto& programr = program_it->second;
+    auto& programInfo = program_it->second;
 
+    // Store all active uniforms in the program (location, array size, and type)
     GLint uniform_count{};
     gl.GetProgramiv(program, GL_ACTIVE_UNIFORMS, &uniform_count);
     if (uniform_count > 0)
@@ -105,26 +106,70 @@ void Context::glLinkProgram(GLuint program)
 
             auto loc = gl.GetUniformLocation(program, uniform_name.get());
 
-            programr.uniforms.emplace(loc, uniform_info);
+            programInfo.uniforms.emplace(loc, uniform_info);
         }
     }
 }
 
 void Context::glUseProgram(unsigned int handle) {
-    auto it = programs.find(handle);
-    if (it == programs.end()) {
-        output_fmt("glUseProgram(program = %u): Invalid program handle.", handle);
+    if (handle == 0) {
+        bound_program = 0;
         return;
+    }
+
+    if (!validate_program_status(handle)) {
+        return;
+    }
+
+    // TODO: add optional performance warning for rebinding the same program
+    //if (handle == bound_program) {
+    //    output_fmt("glUseProgram(program = %u): Program is already bound.", handle);
+    //}
+
+    bound_program = handle;
+}
+
+void Context::glDeleteProgram(GLuint program)
+{
+    auto it = programs.find(program);
+    if (it == programs.end()) {
+        output_fmt("glUseProgram(program = %u): Invalid program handle.", program);
+        return;
+    }
+
+    // note: this does not change which program is bound, even if it becomes invalid here
+
+    programs.erase(it);
+}
+
+void Context::validate_program_bound(std::string_view func_name)
+{
+    if (bound_program == 0) {
+        output_fmt("%s: No program bound.", func_name.data());
+        return;
+    }
+}
+
+bool Context::validate_program_status(GLuint program)
+{
+    auto it = programs.find(program);
+    if (it == programs.end()) {
+        output_fmt("glUseProgram(program = %u): Invalid program handle.", program);
+        return false;
     }
 
     if (it->second.link_status == LinkStatus::UNCHECKED) {
-        output_fmt("glUseProgram(program = %u): Always check program link status before trying to use the object.", handle);
-        return;
+        output_fmt("glUseProgram(program = %u): Always check program link status before trying to use the object.", program);
+        return false;
     }
 
     if (it->second.link_status == LinkStatus::FAILED) {
-        output_fmt("glUseProgram(program = %u): Program has a linker error.", handle);
-        return;
+        output_fmt("glUseProgram(program = %u): Program has a linker error.", program);
+        return false;
+    }
+
+    return true;
+}
     }
 }
 

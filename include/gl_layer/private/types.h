@@ -12,6 +12,8 @@ using GLuint = std::uint32_t;
 using GLint = std::int32_t;
 using GLsizei = std::int32_t;
 using GLchar = char;
+using GLfloat = float;
+using GLboolean = bool;
 
 enum GLShaderInfoParam {
     GL_SHADER_TYPE = 0x8B4F,

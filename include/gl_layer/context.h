@@ -18,6 +18,7 @@ typedef struct ContextGLFunctions
  * @brief Initialize the OpenGL Validation Layer
  * @param gl_version_major OpenGL context major version.
  * @param gl_version_minor OpenGL context minor version.
+ * @param gl_functions Structure with OpenGL function pointers the layer needs to call to work.
  * @return 0 on success, any other value on error.
  */
 int gl_layer_init(unsigned int gl_version_major, unsigned int gl_version_minor, const ContextGLFunctions* gl_functions);

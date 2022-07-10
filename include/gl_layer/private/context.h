@@ -24,6 +24,10 @@ public:
     void glUseProgram(GLuint program);
     void glDeleteProgram(GLuint program);
 
+    void glGenTextures(GLsizei count, GLuint* handles);
+    void glCreateTextures(GLenum target, GLsizei count, GLuint* handles);
+    void glDeleteTextures(GLsizei count, GLuint* handles);
+
     void validate_program_bound(std::string_view func_name);
     bool validate_program_status(GLuint program);
 
@@ -37,6 +41,7 @@ private:
 
     std::unordered_map<GLuint, Shader> shaders{};
     std::unordered_map<GLuint, Program> programs{};
+    std::unordered_map<GLuint, Texture> textures{};
 
     template<typename... Args>
     void output_fmt(const char* fmt, Args&& ... args) {

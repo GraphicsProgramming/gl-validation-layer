@@ -89,9 +89,10 @@ struct Program {
 
 // Represents a texture created by glGenTextures()
 struct Texture {
+    unsigned int handle {};
     // Texture target, either as specified by first glBindTexture() call, or by
     // glCreateTextures().
-    GLTextureTarget target = GLTextureTarget::NO_TEXTURE_TARGET;
+    GLTextureTarget target {};
 };
 
 }

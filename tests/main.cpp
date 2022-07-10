@@ -157,9 +157,13 @@ void main() {
     o_color = vec4(u_color, u_alpha);
 }
 )";
+    GLuint tex[2];
+    glGenTextures(2, tex);
+    glBindTexture(GL_TEXTURE_2D, tex[0]);
+    glDeleteTextures(2, tex);
 
-    unsigned int program = create_shader_from_files("shaders/vert.glsl", "shaders/frag.glsl");
-    unsigned int program2 = create_shader(vtx_source2, frag_source2);
+//    unsigned int program = create_shader_from_files("shaders/vert.glsl", "shaders/frag.glsl");
+//    unsigned int program2 = create_shader(vtx_source2, frag_source2);
 
     // Main application loop
     while(!glfwWindowShouldClose(window)) {
@@ -167,8 +171,8 @@ void main() {
         glClearColor(0, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glUseProgram(program);
-        glUseProgram(program2);
+//        glUseProgram(program);
+//        glUseProgram(program2);
 
         glfwSwapBuffers(window);
     }

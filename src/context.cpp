@@ -99,6 +99,19 @@ void gl_layer_callback(const char* name_c, void* func_ptr, int num_args, ...) {
     } else if (is_func(name, "glLinkProgram")) {
         auto program = va_arg(args, GLuint);
         gl_layer::g_context->glLinkProgram(program);
+    } else if (is_func(name, "glGenTextures")) {
+        auto count = va_arg(args, GLsizei);
+        auto textures = va_arg(args, GLuint*);
+        gl_layer::g_context->glGenTextures(count, textures);
+    } else if (is_func(name, "glCreateTextures")) {
+        auto target = va_arg(args, GLenum);
+        auto count = va_arg(args, GLsizei);
+        auto textures = va_arg(args, GLuint*);
+        gl_layer::g_context->glCreateTextures(target, count, textures);
+    } else if (is_func(name, "glDeleteTextures")) {
+        auto count = va_arg(args, GLsizei);
+        auto textures = va_arg(args, GLuint*);
+        gl_layer::g_context->glDeleteTextures(count, textures);
     }
 
     va_end(args);

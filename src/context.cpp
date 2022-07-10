@@ -62,7 +62,7 @@ void gl_layer_terminate() {
     delete gl_layer::g_context;
 }
 
-void gl_layer_callback(const char* name, void* func_ptr, int num_args, ...) {
+void gl_layer_callback(const char* name_c, void* func_ptr, int num_args, ...) {
     if (!gl_layer::g_context) {
         // Report error: context not initialized.
         return;
@@ -98,6 +98,22 @@ void gl_layer_callback(const char* name, void* func_ptr, int num_args, ...) {
     } else if (is_func(name, "glLinkProgram")) {
         unsigned int program = va_arg(args, unsigned int);
         gl_layer::g_context->glLinkProgram(program);
+    } else if (func_has(name, "glUniform")) {
+        auto location = va_arg(args, GLint);
+        GLsizei count = 1;
+
+        g_context->validate_program_bound(name);
+
+        // array version of a function
+        if (func_has(name, "v")) {
+            count = va_arg(args, GLsizei);
+        }
+
+        g_context->validate_uniform_location_count(location, count);
+
+        for (GLsizei i = 0; i < count; i++) {
+            g_context->validate_uniform_type(location + i, name);
+        }
     }
 
     va_end(args);

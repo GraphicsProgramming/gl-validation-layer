@@ -166,9 +166,10 @@ void main() {
         glfwPollEvents();
         glClearColor(0, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         glUseProgram(program);
         glUseProgram(program2);
+        glUniform1f(glGetUniformLocation(program2, "u_alpha"), 0); // ok
+        glUniform1f(-1, 0); // bad
 
         glfwSwapBuffers(window);
     }

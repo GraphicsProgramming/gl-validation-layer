@@ -1,6 +1,7 @@
 #include <gl_layer/context.h>
 #include <gl_layer/private/context.h>
 #include <memory>
+#include <cassert>
 
 namespace gl_layer {
 
@@ -170,7 +171,32 @@ bool Context::validate_program_status(GLuint program)
 
     return true;
 }
+
+void Context::validate_uniform_location_count(GLint location, GLsizei count)
+{
+    auto program_it = programs.find(bound_program);
+    if (program_it != programs.end()) {
+      return;
+    }
+
+    auto& [_, program] = *program_it;
+
+    // TODO: this doesn't work with uniform arrays because only the base uniform of an array is registered in the map
+    validate_program_status(bound_program);
+    auto uniform_it = program.uniforms.find(location);
+    if (uniform_it == program.uniforms.end()) {
+        output_fmt("glUniform(location = %d, count = %d): Uniform does not exist.", location, count);
+        return;
+    }
+
+    if (count > uniform_it->second.array_size) {
+        output_fmt("glUniform(location = %d, count = %d): count exceeds uniform array length.", location, count);
     }
 }
 
+// validates that the glUniform* function being called matches the type of the uniform being set
+void Context::validate_uniform_type(GLint location, std::string_view uniform_func_name)
+{
+    // TODO: implement
+}
 }

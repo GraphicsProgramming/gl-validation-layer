@@ -26,6 +26,21 @@ enum GLShaderInfoParam {
     GL_ACTIVE_UNIFORMS = 0x8B86
 };
 
+enum GLTextureTarget {
+    NO_TEXTURE_TARGET = 0x0,
+    GL_TEXTURE_1D = 0x0DE0,
+    GL_TEXTURE_2D = 0x0DE1,
+    GL_TEXTURE_3D = 0x806F,
+    GL_TEXTURE_1D_ARRAY = 0x8C18,
+    GL_TEXTURE_2D_ARRAY = 0x8C1A,
+    GL_TEXTURE_RECTANGLE = 0x84F5,
+    GL_TEXTURE_CUBE_MAP = 0x8513,
+    GL_TEXTURE_CUBE_MAP_ARRAY = 0x9009,
+    GL_TEXTURE_BUFFER = 0x8C2A,
+    GL_TEXTURE_2D_MULTISAMPLE = 0x9100,
+    GL_TEXTURE_2D_MULTISAMPLE_ARRAY = 0x9102
+};
+
 enum class CompileStatus {
     UNCHECKED = -1,
     FAILED = 0,
@@ -70,6 +85,13 @@ struct Program {
     std::unordered_map<GLint, UniformInfo> uniforms {};
     // If this is -1, this means the status was never checked by the host application.
     LinkStatus link_status = LinkStatus::UNCHECKED;
+};
+
+// Represents a texture created by glGenTextures()
+struct Texture {
+    // Texture target, either as specified by first glBindTexture() call, or by
+    // glCreateTextures().
+    GLTextureTarget target = GLTextureTarget::NO_TEXTURE_TARGET;
 };
 
 }

@@ -1,5 +1,7 @@
 # OpenGL Validation Layer
 
+[![CMake](https://github.com/GraphicsProgramming/gl-validation-layer/actions/workflows/cmake.yml/badge.svg)](https://github.com/GraphicsProgramming/gl-validation-layer/actions/workflows/cmake.yml)
+
 ## What is this?
 
 If you are familiar with the Vulkan API, you have probably heard of *Validation Layers* before. 

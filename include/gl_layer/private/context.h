@@ -33,7 +33,7 @@ private:
     GLLayerOutputFun output_fun = nullptr;
     void* output_user_data = nullptr;
     ContextGLFunctions gl;
-    GLuint bound_program = 0;
+    GLuint current_program_handle = 0;
 
     std::unordered_map<GLuint, Shader> shaders{};
     std::unordered_map<GLuint, Program> programs{};

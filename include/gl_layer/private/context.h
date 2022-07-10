@@ -15,13 +15,13 @@ public:
 
     void set_output_callback(GLLayerOutputFun callback, void* user_data);
 
-    void glCompileShader(unsigned int handle);
-    void glGetShaderiv(unsigned int handle, GLenum param, int* params);
-    void glAttachShader(unsigned int program, unsigned int shader);
+    void glCompileShader(GLuint program);
+    void glGetShaderiv(GLuint program, GLenum param, GLint* params);
+    void glAttachShader(GLuint program, GLuint shader);
 
-    void glGetProgramiv(unsigned int handle, GLenum param, int* params);
+    void glGetProgramiv(GLuint program, GLenum param, GLint* params);
     void glLinkProgram(GLuint program);
-    void glUseProgram(unsigned int handle);
+    void glUseProgram(GLuint program);
     void glDeleteProgram(GLuint program);
 
     void validate_program_bound(std::string_view func_name);
@@ -35,8 +35,8 @@ private:
     ContextGLFunctions gl;
     GLuint bound_program = 0;
 
-    std::unordered_map<unsigned int, Shader> shaders{};
-    std::unordered_map<unsigned int, Program> programs{};
+    std::unordered_map<GLuint, Shader> shaders{};
+    std::unordered_map<GLuint, Program> programs{};
 
     template<typename... Args>
     void output_fmt(const char* fmt, Args&& ... args) {

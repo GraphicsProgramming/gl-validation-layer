@@ -62,7 +62,7 @@ void gl_layer_terminate() {
     delete gl_layer::g_context;
 }
 
-void gl_layer_callback(const char* name, void* func_ptr, int num_args, ...) {
+void gl_layer_callback(const char* name_c, void* func_ptr, int num_args, ...) {
     if (!gl_layer::g_context) {
         // Report error: context not initialized.
         return;
@@ -76,27 +76,28 @@ void gl_layer_callback(const char* name, void* func_ptr, int num_args, ...) {
     va_start(args, num_args);
 
     if (is_func(name, "glCompileShader")) {
-        gl_layer::g_context->glCompileShader(va_arg(args, unsigned int));
+        auto shader = va_arg(args, GLuint);
+        gl_layer::g_context->glCompileShader(shader);
     } else if (is_func(name, "glGetShaderiv")) {
-        unsigned int shader = va_arg(args, unsigned int);
-        gl_layer::GLenum param = va_arg(args, gl_layer::GLenum);
-        int* params = va_arg(args, int*);
+        auto shader = va_arg(args, GLuint);
+        gl_layer::GLenum param = va_arg(args, GLenum);
+        auto* params = va_arg(args, GLint*);
         gl_layer::g_context->glGetShaderiv(shader, param, params);
     } else if (is_func(name, "glAttachShader")) {
         // Note that the parameters must be pulled outside the function call, since there is no guarantee that they will evaluate in order!
-        unsigned int program = va_arg(args, unsigned int);
-        unsigned int shader = va_arg(args, unsigned int);
+        auto program = va_arg(args, GLuint);
+        auto shader = va_arg(args, GLuint);
         gl_layer::g_context->glAttachShader(program, shader);
     } else if (is_func(name, "glGetProgramiv")) {
-        unsigned int program = va_arg(args, unsigned int);
-        gl_layer::GLenum param = va_arg(args, gl_layer::GLenum);
-        int* params = va_arg(args, int*);
+        auto program = va_arg(args, GLuint);
+        gl_layer::GLenum param = va_arg(args, GLenum);
+        auto* params = va_arg(args, GLint*);
         gl_layer::g_context->glGetProgramiv(program, param, params);
     } else if (is_func(name, "glUseProgram")) {
-        unsigned int program = va_arg(args, unsigned int);
+        auto program = va_arg(args, GLuint);
         gl_layer::g_context->glUseProgram(program);
     } else if (is_func(name, "glLinkProgram")) {
-        unsigned int program = va_arg(args, unsigned int);
+        auto program = va_arg(args, GLuint);
         gl_layer::g_context->glLinkProgram(program);
     }
 

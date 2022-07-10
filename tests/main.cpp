@@ -158,8 +158,9 @@ void main() {
 }
 )";
     GLuint tex[2];
-    glGenTextures(2, tex);
+    glCreateTextures(GL_TEXTURE_2D, 2, tex);
     glBindTexture(GL_TEXTURE_2D, tex[0]);
+    glBindTexture(GL_TEXTURE_3D, tex[0]);
     glDeleteTextures(2, tex);
 
 //    unsigned int program = create_shader_from_files("shaders/vert.glsl", "shaders/frag.glsl");

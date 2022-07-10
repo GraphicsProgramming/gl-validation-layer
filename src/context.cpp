@@ -17,6 +17,18 @@ const char* enum_str(GLenum v) {
         case GL_LINK_STATUS: return "GL_LINK_STATUS";
         case GL_INFO_LOG_LENGTH: return "GL_INFO_LOG_LENGTH";
         case GL_SHADER_SOURCE_LENGTH: return "GL_SHADER_SOURCE_LENGTH";
+
+        case GL_TEXTURE_1D: return "GL_TEXTURE_1D";
+        case GL_TEXTURE_2D: return "GL_TEXTURE_2D";
+        case GL_TEXTURE_3D: return "GL_TEXTURE_3D";
+        case GL_TEXTURE_1D_ARRAY: return "GL_TEXTURE_1D_ARRAY";
+        case GL_TEXTURE_2D_ARRAY: return "GL_TEXTURE_2D_ARRAY";
+        case GL_TEXTURE_RECTANGLE: return "GL_TEXTURE_RECTANGLE";
+        case GL_TEXTURE_CUBE_MAP: return "GL_TEXTURE_CUBE_MAP";
+        case GL_TEXTURE_CUBE_MAP_ARRAY: return "GL_TEXTURE_CUBE_MAP_ARRAY";
+        case GL_TEXTURE_BUFFER: return "GL_TEXTURE_BUFFER";
+        case GL_TEXTURE_2D_MULTISAMPLE: return "GL_TEXTURE_2D_MULTISAMPLE";
+        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY: return "GL_TEXTURE_2D_MULTISAMPLE_ARRAY";
         default:
             return "";
     }
@@ -112,6 +124,10 @@ void gl_layer_callback(const char* name_c, void* func_ptr, int num_args, ...) {
         auto count = va_arg(args, GLsizei);
         auto textures = va_arg(args, GLuint*);
         gl_layer::g_context->glDeleteTextures(count, textures);
+    } else if (is_func(name, "glBindTexture")) {
+        auto target = va_arg(args, GLenum);
+        auto texture = va_arg(args, GLuint);
+        gl_layer::g_context->glBindTexture(target, texture);
     }
 
     va_end(args);

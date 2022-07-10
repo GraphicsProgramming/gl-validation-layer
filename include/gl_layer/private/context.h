@@ -26,6 +26,7 @@ public:
 
     void glGenTextures(GLsizei count, GLuint* handles);
     void glCreateTextures(GLenum target, GLsizei count, GLuint* handles);
+    void glBindTexture(GLenum target, GLuint texture);
     void glDeleteTextures(GLsizei count, GLuint* handles);
 
     void validate_program_bound(std::string_view func_name);
@@ -38,6 +39,9 @@ private:
     void* output_user_data = nullptr;
     ContextGLFunctions gl;
     GLuint current_program_handle = 0;
+
+    // One entry per texture target
+    std::unordered_map<GLTextureTarget, GLuint> bound_textures{};
 
     std::unordered_map<GLuint, Shader> shaders{};
     std::unordered_map<GLuint, Program> programs{};

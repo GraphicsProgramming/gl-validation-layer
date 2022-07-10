@@ -4,26 +4,26 @@
 
 namespace gl_layer {
 
-void Context::glCompileShader(unsigned int handle) {
+void Context::glCompileShader(GLuint program) {
     // We will use glCompileShader to add shaders to our internal structure, since
     // we cannot access the return value from glCreateShader()
 
-    auto it = shaders.find(handle);
+    auto it = shaders.find(program);
     if (it != shaders.end()) {
-        output_fmt("glCompileShader(shader = %u): Shader is already compiled.", handle);
+        output_fmt("glCompileShader(shader = %u): Shader is already compiled.", program);
         return;
     }
 
-    shaders.emplace(handle, Shader{ handle });
+    shaders.emplace(program, Shader{ program });
 }
 
-void Context::glGetShaderiv(unsigned int handle, GLenum param, int* params) {
+void Context::glGetShaderiv(GLuint program, GLenum param, GLint* params) {
     assert(params && "params may not be nullptr");
 
     if (param == GL_COMPILE_STATUS) {
-        auto it = shaders.find(handle);
+        auto it = shaders.find(program);
         if (it == shaders.end()) {
-            output_fmt("glGetShaderiv(handle = %u, param = %s, params = %p): Invalid shader handle.", handle, enum_str(param), static_cast<void*>(params));
+            output_fmt("glGetShaderiv(handle = %u, param = %s, params = %p): Invalid shader handle.", program, enum_str(param), static_cast<void*>(params));
             return;
         }
 
@@ -31,7 +31,7 @@ void Context::glGetShaderiv(unsigned int handle, GLenum param, int* params) {
     }
 }
 
-void Context::glAttachShader(unsigned int program, unsigned int shader) {
+void Context::glAttachShader(GLuint program, GLuint shader) {
     // Make sure compile status was checked and successful when attaching a shader.
     auto it = shaders.find(shader);
     if (it == shaders.end()) {
@@ -57,13 +57,13 @@ void Context::glAttachShader(unsigned int program, unsigned int shader) {
     }
 }
 
-void Context::glGetProgramiv(unsigned int handle, GLenum param, int* params) {
+void Context::glGetProgramiv(GLuint program, GLenum param, GLint* params) {
     assert(params && "params may not be nullptr");
 
     if (param == GL_LINK_STATUS) {
-        auto it = programs.find(handle);
+        auto it = programs.find(program);
         if (it == programs.end()) {
-            output_fmt("glGetProgramiv(handle = %u, param = %s, params = %p): Invalid program handle.", handle, enum_str(param), static_cast<void*>(params));
+            output_fmt("glGetProgramiv(handle = %u, param = %s, params = %p): Invalid program handle.", program, enum_str(param), static_cast<void*>(params));
             return;
         }
 
@@ -111,13 +111,13 @@ void Context::glLinkProgram(GLuint program)
     }
 }
 
-void Context::glUseProgram(unsigned int handle) {
-    if (handle == 0) {
+void Context::glUseProgram(GLuint program) {
+    if (program == 0) {
         bound_program = 0;
         return;
     }
 
-    if (!validate_program_status(handle)) {
+    if (!validate_program_status(program)) {
         return;
     }
 
@@ -126,11 +126,10 @@ void Context::glUseProgram(unsigned int handle) {
     //    output_fmt("glUseProgram(program = %u): Program is already bound.", handle);
     //}
 
-    bound_program = handle;
+    bound_program = program;
 }
 
-void Context::glDeleteProgram(GLuint program)
-{
+void Context::glDeleteProgram(GLuint program) {
     auto it = programs.find(program);
     if (it == programs.end()) {
         output_fmt("glUseProgram(program = %u): Invalid program handle.", program);
@@ -142,16 +141,14 @@ void Context::glDeleteProgram(GLuint program)
     programs.erase(it);
 }
 
-void Context::validate_program_bound(std::string_view func_name)
-{
+void Context::validate_program_bound(std::string_view func_name) {
     if (bound_program == 0) {
         output_fmt("%s: No program bound.", func_name.data());
         return;
     }
 }
 
-bool Context::validate_program_status(GLuint program)
-{
+bool Context::validate_program_status(GLuint program) {
     auto it = programs.find(program);
     if (it == programs.end()) {
         output_fmt("glUseProgram(program = %u): Invalid program handle.", program);
@@ -170,7 +167,4 @@ bool Context::validate_program_status(GLuint program)
 
     return true;
 }
-    }
-}
-
 }

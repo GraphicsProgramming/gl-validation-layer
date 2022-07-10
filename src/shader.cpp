@@ -89,7 +89,7 @@ void Context::glLinkProgram(GLuint program)
         GLint max_name_len{};
         gl.GetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_name_len);
 
-        auto uniform_name = std::make_unique<char[]>(max_name_len);
+        auto uniform_name = std::make_unique<char[]>(static_cast<std::size_t>(max_name_len));
 
         for (int i = 0; i < uniform_count; i++)
         {
@@ -97,7 +97,7 @@ void Context::glLinkProgram(GLuint program)
             UniformInfo uniform_info{};
             gl.GetActiveUniform(
               program,
-              i,
+              static_cast<unsigned int>(i),
               max_name_len,
               &uniform_name_length,
               &uniform_info.array_size,

@@ -15,7 +15,8 @@ add_library(gl_validation_layer
 
 target_include_directories(gl_validation_layer PUBLIC include/)
 
-if ((${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang") OR (${CMAKE_CXX_COMPILER_ID} STREQUAL "GCC"))
+message(STATUS "Compiler is ${CMAKE_CXX_COMPILER_ID}")
+if ((${CMAKE_CXX_COMPILER_ID} MATCHES "Clang") OR (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU"))
         target_compile_options(gl_validation_layer PRIVATE -Wall -Werror
                 -Wno-c++98-compat
                 -Wno-c++98-compat-pedantic

@@ -47,7 +47,7 @@ static bool is_func(std::string_view name, std::string_view func) {
     return func == name;
 }
 
-static bool func_has(std::string_view name, std::string_view substr) {
+[[maybe_unused]] static bool func_has(std::string_view name, std::string_view substr) {
     return name.find(substr) != std::string_view::npos;
 }
 

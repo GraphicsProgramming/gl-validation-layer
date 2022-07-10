@@ -79,7 +79,7 @@ void Context::glLinkProgram(GLuint program)
         return;
     }
 
-    auto& programInfo = program_it->second;
+    auto& program_info = program_it->second;
 
     // Store all active uniforms in the program (location, array size, and type)
     GLint uniform_count{};
@@ -106,14 +106,14 @@ void Context::glLinkProgram(GLuint program)
 
             auto loc = gl.GetUniformLocation(program, uniform_name.get());
 
-            programInfo.uniforms.emplace(loc, uniform_info);
+            program_info.uniforms.emplace(loc, uniform_info);
         }
     }
 }
 
 void Context::glUseProgram(GLuint program) {
     if (program == 0) {
-        bound_program = 0;
+        current_program_handle = 0;
         return;
     }
 
@@ -122,11 +122,11 @@ void Context::glUseProgram(GLuint program) {
     }
 
     // TODO: add optional performance warning for rebinding the same program
-    //if (handle == bound_program) {
+    //if (handle == current_program_handle) {
     //    output_fmt("glUseProgram(program = %u): Program is already bound.", handle);
     //}
 
-    bound_program = program;
+    current_program_handle = program;
 }
 
 void Context::glDeleteProgram(GLuint program) {
@@ -142,7 +142,7 @@ void Context::glDeleteProgram(GLuint program) {
 }
 
 void Context::validate_program_bound(std::string_view func_name) {
-    if (bound_program == 0) {
+    if (current_program_handle == 0) {
         output_fmt("%s: No program bound.", func_name.data());
         return;
     }

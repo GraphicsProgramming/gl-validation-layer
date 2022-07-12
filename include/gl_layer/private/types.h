@@ -41,6 +41,20 @@ enum GLTextureTarget {
     GL_TEXTURE_2D_MULTISAMPLE_ARRAY = 0x9102
 };
 
+enum GLFilter {
+    GL_NEAREST = 0x2600,
+    GL_LINEAR = 0x2601
+};
+
+enum GLEdgeSample {
+    GL_REPEAT = 0x2901,
+    GL_MIRRORED_REPEAT = 0x8370,
+    GL_CLAMP_TO_EDGE = 0x812F,
+    GL_CLAMP_TO_BORDER = 0x812D,
+    // Core in 4.4
+    GL_MIRROR_CLAMP_TO_EDGE = 0x8743
+};
+
 enum class CompileStatus {
     UNCHECKED = -1,
     FAILED = 0,
@@ -85,6 +99,40 @@ struct Program {
     std::unordered_map<GLint, UniformInfo> uniforms {};
     // If this is -1, this means the status was never checked by the host application.
     LinkStatus link_status = LinkStatus::UNCHECKED;
+};
+
+// Represents either the sampler state of a texture, or a sampler object created by glGenSamplers()
+struct Sampler {
+    // GL_TEXTURE_MAG_FILTER
+    GLFilter mag_filter {};
+    // GL_TEXTURE_MIN_FILTER
+    GLFilter min_filter {};
+    // Core in 4.6
+    // GL_TEXTURE_MAX_ANISOTROPY
+    float anisotropy = 1.0;
+    // GL_TEXTURE_MAX_LOD
+    float max_lod = 0.0;
+    // GL_TEXTURE_MIN_LOD
+    float min_lod = 0.0;
+    // GL_TEXTURE_LOD_BIAS
+    float lod_bias = 0.0;
+    // GL_TEXTURE_WRAP_S
+    GLEdgeSample edge_s {};
+    // GL_TEXTURE_WRAP_T
+    GLEdgeSample edge_t {};
+    // GL_TEXTURE_WRAP_R
+    GLEdgeSample edge_r {};
+    // GL_TEXTURE_BORDER_COLOR
+    // From https://www.khronos.org/opengl/wiki/Sampler_Object#Sampling_parameters:
+    // The border color can be provided in floating-point values, Normalized Integers, or non-normalized integers, using the various forms of glSamplerParameter/glTexParameter.
+    // Note that the border color is a 4-component color, so you must use the v version of the function, and you must provide all four components in a single call.
+    // When using the fv function, the color will be stored as a float. When using iv, the color will be converted to a float via signed normalization.
+    // Since the components are GLint 32-bit integers, the range is from [-2^31, 2^31). When using the Ii or Iui forms, the color will be stored as signed or unsigned integers, as appropriate.
+    // This means we can store the color as 4 floating point values, and convert them by normalizing in the gl[Texture/Sampler]Parameter* call.
+    GLfloat border_color[4] {};
+    // GL_TEXTURE_CUBE_MAP_SEAMLESS
+    // May be overwritten by global parameter
+    GLboolean cubemap_seamless = false;
 };
 
 // Represents a texture created by glGenTextures()

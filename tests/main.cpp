@@ -109,8 +109,8 @@ int main() {
 
     // Initialize GLFW.
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
@@ -125,7 +125,7 @@ int main() {
     glFuncs.GetActiveUniform = glad_glGetActiveUniform;
     glFuncs.GetUniformLocation = glad_glGetUniformLocation;
     glFuncs.GetProgramiv = glad_glGetProgramiv;
-    int error = gl_layer_init(3, 3, &glFuncs);
+    int error = gl_layer_init(4, 6, &glFuncs);
     if (error) {
         std::cerr << "Could not initialize OpenGL Validation Layer\n";
         return -1;
@@ -157,9 +157,14 @@ void main() {
     o_color = vec4(u_color, u_alpha);
 }
 )";
+    GLuint tex[2];
+    glCreateTextures(GL_TEXTURE_2D, 2, tex);
+    glBindTexture(GL_TEXTURE_2D, tex[0]);
+    glBindTexture(GL_TEXTURE_3D, tex[0]);
+    glDeleteTextures(2, tex);
 
-    unsigned int program = create_shader_from_files("shaders/vert.glsl", "shaders/frag.glsl");
-    unsigned int program2 = create_shader(vtx_source2, frag_source2);
+//    unsigned int program = create_shader_from_files("shaders/vert.glsl", "shaders/frag.glsl");
+//    unsigned int program2 = create_shader(vtx_source2, frag_source2);
 
     // Main application loop
     while(!glfwWindowShouldClose(window)) {
@@ -167,8 +172,8 @@ void main() {
         glClearColor(0, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glUseProgram(program);
-        glUseProgram(program2);
+//        glUseProgram(program);
+//        glUseProgram(program2);
 
         glfwSwapBuffers(window);
     }
